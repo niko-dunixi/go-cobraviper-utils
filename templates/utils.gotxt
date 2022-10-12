@@ -1,0 +1,47 @@
+// Code generated with `make generate`; DO NOT EDIT.
+//go:build !generating
+
+package cobraviperutils
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
+)
+
+type FlagType interface {
+  {{ listInterfaceTypes . }}
+}
+
+func BindFlag[T FlagType](flagset *pflag.FlagSet, name string, value T, usage string) {
+	switch any(value).(type) {
+	{{- range $key, $value := . }}
+	case {{ lower $key }}:
+		flagset.{{- $key -}}(name, any(value).({{- lower $key -}}), usage)
+	{{- end }}
+	}
+	viper.BindPFlag(name, flagset.Lookup(name))
+	viper.BindEnv(name, strings.ToUpper(strings.ReplaceAll(name, "-", "_")))
+}
+
+func GetFlag[T FlagType](name string) T {
+	asTPointer := func(value any) *T {
+		castValue, ok := value.(T)
+		if !ok {
+			placeholder := new(T)
+			panic(fmt.Sprintf("could not cast value (%v) to type %T", value, &placeholder))
+		}
+		return &castValue
+	}
+
+	placeholder := new(T)
+	switch any(*placeholder).(type) {
+	{{- range $key, $value := . }}
+	case {{ lower $key }}:
+		placeholder = asTPointer(viper.Get{{- $key -}}(name))
+	{{- end }}
+	}
+	return *placeholder
+}

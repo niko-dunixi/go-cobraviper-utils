@@ -1,0 +1,34 @@
+{
+  "String": {
+    "default": "I am the default value",
+    "value": "Hey, I'm Niko Dunixi!",
+    "boundary": {
+      "left": "\"",
+      "right": "\""
+    }
+  },
+  "Int": {
+    "default": 1234,
+    "value": 1337
+  },
+  "Int32": {
+    "default": 1234,
+    "value": 1337
+  },
+  "Int64": {
+    "default": 1234,
+    "value": 1337
+  },
+  "Uint": {
+    "default": 1234,
+    "value": 1337
+  },
+  "Uint32": {
+    "default": 1234,
+    "value": 1337
+  },
+  "Uint64": {
+    "default": 1234,
+    "value": 1337
+  }
+}

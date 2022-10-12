@@ -1,0 +1,112 @@
+// Code generated with `make generate`; DO NOT EDIT.
+//go:build !generating
+
+package cobraviperutils
+
+import (
+	"os"
+	"testing"
+
+	"github.com/spf13/pflag"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestBindFlag(t *testing.T) {
+  {{- range $key, $value := . }}
+	t.Run("{{ lower $key -}}", func(t *testing.T) {
+		// No parameters set by user
+		t.Run("default fallback value", func(t *testing.T) {
+			flags := pflag.NewFlagSet("testing", pflag.ContinueOnError)
+			BindFlag[{{- lower $key -}}](
+				flags,
+				"my-key",
+				{{ if shouldBound $value.Boundary -}}
+					{{- $value.Boundary.Left -}}
+				{{- end }}
+				{{- $value.Default -}}
+				{{ if shouldBound $value.Boundary -}}
+					{{- $value.Boundary.Right -}}
+				{{- end }},
+				"flag usage or description",
+			)
+
+			err := flags.Parse([]string{})
+			require.NoError(t, err)
+			assert.Equal(t,
+				{{ lower $key -}}(
+					{{- if shouldBound $value.Boundary -}}
+						{{- $value.Boundary.Left -}}
+					{{- end }}
+					{{- $value.Default -}}
+					{{- if shouldBound $value.Boundary -}}
+						{{- $value.Boundary.Right -}}
+					{{- end -}}
+				),
+				GetFlag[{{- lower $key -}}]("my-key"),
+			)
+		})
+		// Environment variable set
+		t.Run("environment variable", func(t *testing.T) {
+			os.Setenv("MY_KEY", "{{- $value.Value -}}")
+			defer os.Unsetenv("MY_KEY")
+
+			flags := pflag.NewFlagSet("testing", pflag.ContinueOnError)
+			BindFlag[{{- lower $key -}}](flags,
+				"my-key",
+				{{ if shouldBound $value.Boundary -}}
+					{{- $value.Boundary.Left -}}
+				{{- end }}
+				{{- $value.Default -}}
+				{{- if shouldBound $value.Boundary -}}
+					{{- $value.Boundary.Right -}}
+				{{- end }},
+				"flag usage or description",
+			)
+
+			err := flags.Parse([]string{})
+			require.NoError(t, err)
+			assert.Equal(t,
+				{{ lower $key -}}(
+				{{- if shouldBound $value.Boundary -}}
+					{{- $value.Boundary.Left -}}
+				{{- end }}
+				{{- $value.Value -}}
+				{{ if shouldBound $value.Boundary -}}
+					{{- $value.Boundary.Right -}}
+				{{- end }}),
+				GetFlag[{{- lower $key -}}]("my-key"),
+			)
+		})
+		// Flag value set
+		t.Run("cli parameter", func(t *testing.T) {
+			flags := pflag.NewFlagSet("testing", pflag.ContinueOnError)
+			BindFlag[{{- lower $key -}}](flags,
+				"my-key",
+				{{ if shouldBound $value.Boundary -}}
+					{{- $value.Boundary.Left -}}
+				{{- end }}
+				{{- $value.Default -}}
+				{{- if shouldBound $value.Boundary -}}
+					{{- $value.Boundary.Right -}}
+				{{- end }},
+				"flag usage or description",
+			)
+
+			err := flags.Parse([]string{"--my-key", "{{- $value.Value -}}"})
+			require.NoError(t, err)
+			assert.Equal(t,
+				{{ lower $key -}}(
+				{{- if shouldBound $value.Boundary -}}
+					{{- $value.Boundary.Left -}}
+				{{- end -}}
+				{{- $value.Value -}}
+				{{ if shouldBound $value.Boundary -}}
+					{{- $value.Boundary.Right -}}
+				{{- end }}),
+				GetFlag[{{- lower $key -}}]("my-key"),
+			)
+		})
+	})
+  {{- end }}
+}
