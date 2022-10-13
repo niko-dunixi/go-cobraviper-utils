@@ -16,7 +16,7 @@ $ go get github.com/paul-nelson-baker/go-cobraviper-utils
 
 Import in your root command or subcommand, wherever is most appropriate.
 For example, if you had a base command that needed to add persistent flags to `root.go`
-and a `serve.go` subcommand, you might use these utils like this
+and `serve.go` and `migrate.go` subcommands, you might use these utils like this
 ```go
 // root.go
 
@@ -44,7 +44,29 @@ func init() {
 
 You would then retrieve values like this
 ```go
-myPort := GetFlag[int]("port")
+var serveCmd = &cobra.Command{
+	Use:   "serve",
+	Short: "Starts the rest API",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("serve called")
+		host := cobraviperutils.GetFlag[string]("host")
+		port := cobraviperutils.GetFlag[int]("port")
+		log.Printf("Will run on: %s:%d", host, port)
+		sqlHost := cobraviperutils.GetFlag[string]("postgres-host")
+		sqlPort := cobraviperutils.GetFlag[int]("postgres-port")
+		log.Printf("Will use postgres located: %s:%d", sqlHost, sqlPort)
+	},
+}
+
+var migrateCmd = &cobra.Command{
+	Use:   "migrate",
+	Short: "Updates the database schema",
+	Run: func(cmd *cobra.Command, args []string) {
+		sqlHost := cobraviperutils.GetFlag[string]("postgres-host")
+		sqlPort := cobraviperutils.GetFlag[int]("postgres-port")
+		log.Printf("Will use postgres located: %s:%d", sqlHost, sqlPort)
+	},
+}
 ```
 
 ## Contributing
