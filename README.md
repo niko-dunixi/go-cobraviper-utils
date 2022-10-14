@@ -11,7 +11,7 @@ debugging what should be a generally simple pattern.
 
 Add to your module or project
 ```bash
-$ go get github.com/paul-nelson-baker/go-cobraviper-utils
+$ go get github.com/niko-dunixi/go-cobraviper-utils
 ```
 
 Import in your root command or subcommand, wherever is most appropriate.
