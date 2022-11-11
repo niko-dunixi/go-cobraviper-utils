@@ -1,4 +1,4 @@
-module github.com/paul-nelson-baker/go-cobraviper-utils
+module github.com/niko-dunixi/go-cobraviper-utils
 
 go 1.19
 
